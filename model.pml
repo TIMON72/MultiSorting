@@ -1,46 +1,82 @@
-chan STDIN
-#define SIZE 16
-chan buffer = [SIZE] of { int }
-int array[SIZE]
-
-
+chan STDIN // Поток ввода в консоли
+#define SIZE 16 // Размерность массива
+int array[SIZE], sort1[SIZE], sort2[SIZE], sort3[SIZE] // Массивы
+// Сортировка пузырьком
 proctype Sort1() {
     printf("Sort1 running\n")
-    //int array[SIZE]
-    //buffer ? array
-    int i
-
-    //int temp
-    //buffer ? temp
-    //printf("temp = %d\n", temp)
-    for (i : 0 .. SIZE - 1) {
-        //buffer ? array[i]
-        printf("array1[%d] = %d ", i, array[i])
+    int i, j, temp
+    for (i : 1 .. SIZE - 1) {
+        for (j : 0 .. SIZE - i - 1) {
+            if
+            :: sort1[j] > sort1[j + 1] ->
+                temp = sort1[j]
+                sort1[j] = sort1[j + 1]
+                sort1[j + 1] = temp
+            :: else ->
+                skip
+            fi
+        }
     }
+    // for (i : 0 .. SIZE - 1) {
+    //     printf("sort1[%d] = %d ", i, sort1[i])
+    // }
 }
-
+// Сортировка вставками
 proctype Sort2() {
     printf("Sort2 running\n")
-    //int array[SIZE]
-    int i
-    for (i : 0 .. SIZE - 1) {
-        //buffer ? array[i]
-        printf("array2[%d] = %d ", i, array[i])
+    int i, temp
+    for (i : 1 .. SIZE - 1) {
+        temp = sort2[i]
+        int j = i
+        do
+        ::  if
+            :: j > 0 && temp < sort2[j - 1] ->
+                sort2[j] = sort2[j - 1]
+                j--
+            :: else ->
+                break
+            fi
+            sort2[j] = temp
+        od
     }
+    // for (i : 0 .. SIZE - 1) {
+    //     printf("sort2[%d] = %d ", i, sort2[i])
+    // }
 }
-
-// active proctype Main() {   
-//     int array
-//     STDIN ? array
-//     //Sinp ? array
-//     printf("IN = \t%d\n", array)
-//     buffer ! array
-//     run P()
-// }
-
+// Сортировка Шелла
+proctype Sort3() {
+    printf("Sort3 running\n")
+    int i, j, temp
+    int step = SIZE / 2
+    do
+    ::  if
+        :: step > 0 ->
+            for (i : 0 .. SIZE - 1 - step) {
+                j = i
+                do
+                ::  if
+                    :: j >= 0 && sort3[j] > sort3[j + step] ->
+                        temp = sort3[j]
+                        sort3[j] = sort3[j + step]
+                        sort3[j + step] = temp
+                        j = j - step
+                    :: else ->
+                        break
+                    fi
+                od
+            }
+            step = step / 2
+        :: else ->
+            break
+        fi
+    od
+    // for (i : 0 .. SIZE - 1) {
+    //     printf("sort3[%d] = %d ", i, sort3[i])
+    // }
+}
+// Инициализирующий процесс
 init {
     int c
-    //int array[SIZE]
     int i = 0
     int sign = 1
     printf("Enter array (size <= 16): ")
@@ -75,14 +111,18 @@ init {
         :: c == '\n' -> 
             break
         :: else -> skip
-        fi;
-    od;
-    // for (i : 0 .. SIZE - 1) {
-    //     buffer ! array[i]
-    // }
-    printf("read: %d %d\n", array[0], array[1])
+        fi
+    od
+    // Копирование массива в переменные для сортировки
+    for (i : 0 .. SIZE - 1) {
+        sort1[i] = array[i]
+        sort2[i] = array[i]
+        sort3[i] = array[i]
+    }
+    // Запуск сортировок
     atomic {
         run Sort1()
         run Sort2()
+        run Sort3()
     }
 }
