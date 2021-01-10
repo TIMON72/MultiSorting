@@ -1,9 +1,9 @@
-chan STDIN // Поток ввода в консоли
 #define SIZE 16 // Размерность массива
+chan STDIN // Поток ввода в консоли
 int array[SIZE], sort1[SIZE], sort2[SIZE], sort3[SIZE] // Массивы
+bool isSorted1 = false, isSorted2 = false, isSorted3 = false // Флаги завершения сортировок
 // Сортировка пузырьком
 proctype Sort1() {
-    printf("Sort1 running\n")
     int i, j, temp
     for (i : 1 .. SIZE - 1) {
         for (j : 0 .. SIZE - i - 1) {
@@ -17,13 +17,11 @@ proctype Sort1() {
             fi
         }
     }
-    // for (i : 0 .. SIZE - 1) {
-    //     printf("sort1[%d] = %d ", i, sort1[i])
-    // }
+    isSorted1 = true
+    printf("Sort1 is finished\n")
 }
 // Сортировка вставками
 proctype Sort2() {
-    printf("Sort2 running\n")
     int i, temp
     for (i : 1 .. SIZE - 1) {
         temp = sort2[i]
@@ -39,13 +37,11 @@ proctype Sort2() {
             sort2[j] = temp
         od
     }
-    // for (i : 0 .. SIZE - 1) {
-    //     printf("sort2[%d] = %d ", i, sort2[i])
-    // }
+    isSorted2 = true
+    printf("Sort2 is finished\n")
 }
 // Сортировка Шелла
 proctype Sort3() {
-    printf("Sort3 running\n")
     int i, j, temp
     int step = SIZE / 2
     do
@@ -70,15 +66,12 @@ proctype Sort3() {
             break
         fi
     od
-    // for (i : 0 .. SIZE - 1) {
-    //     printf("sort3[%d] = %d ", i, sort3[i])
-    // }
+    isSorted3 = true
+    printf("Sort3 is finished\n")
 }
 // Инициализирующий процесс
 init {
-    int c
-    int i = 0
-    int sign = 1
+    int c, i = 0, sign = 1
     printf("Enter array (size <= 16): ")
     do
     :: STDIN ? c ->
@@ -110,7 +103,8 @@ init {
             i++
         :: c == '\n' -> 
             break
-        :: else -> skip
+        :: else ->
+            skip
         fi
     od
     // Копирование массива в переменные для сортировки
@@ -125,4 +119,29 @@ init {
         run Sort2()
         run Sort3()
     }
+    // Ожидание завершения сортировок и голосование
+    (isSorted1 && isSorted2 && isSorted3) ->
+        printf("Sorts are finished\n")
+        printf("Result of sorting: ")
+        int result[SIZE]
+        for (i : 0 .. SIZE - 1) {
+            bool isPassed
+            if 
+            :: (sort1[i] == sort2[i]) ->
+                result[i] = sort1[i]
+                isPassed = true
+            :: (sort1[i] == sort3[i]) ->
+                result[i] = sort1[i]
+                isPassed = true
+            :: (sort2[i] == sort3[i]) ->
+                result[i] = sort2[i]
+                isPassed = true
+            :: else ->
+                isPassed = false
+                printf("Voting error for array[%d] = %d | %d | %d\n", i, sort1[i], sort2[i], sort3[i])
+            fi
+            printf("%d", result[i])
+            //assert(isPassed)
+        }
+        printf("\nEnd\n")
 }
