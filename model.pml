@@ -1,4 +1,4 @@
-#define SIZE 16 // Размерность массива
+#define SIZE 5 // Размерность массива
 chan STDIN // Поток ввода в консоли
 int array[SIZE], sort1[SIZE], sort2[SIZE], sort3[SIZE] // Массивы
 bool isSorted1 = false, isSorted2 = false, isSorted3 = false // Флаги завершения сортировок
@@ -17,8 +17,8 @@ proctype Sort1() {
             fi
         }
     }
-    isSorted1 = true
     printf("Sort1 is finished\n")
+    isSorted1 = true
 }
 // Сортировка вставками
 proctype Sort2() {
@@ -37,8 +37,8 @@ proctype Sort2() {
             sort2[j] = temp
         od
     }
-    isSorted2 = true
     printf("Sort2 is finished\n")
+    isSorted2 = true
 }
 // Сортировка Шелла
 proctype Sort3() {
@@ -66,47 +66,50 @@ proctype Sort3() {
             break
         fi
     od
-    isSorted3 = true
     printf("Sort3 is finished\n")
+    isSorted3 = true
 }
 // Инициализирующий процесс
 init {
-    int c, i = 0, sign = 1
-    printf("Enter array (size <= 16): ")
-    do
-    :: STDIN ? c ->
-        if
-        :: c == '-' -> 
-            sign = -1
-        :: c == '0' ->
-            array[i] = array[i] * 10 + sign * 0
-        :: c == '1' ->
-            array[i] = array[i] * 10 + sign * 1
-        :: c == '2' ->
-            array[i] = array[i] * 10 + sign * 2
-        :: c == '3' ->
-            array[i] = array[i] * 10 + sign * 3
-        :: c == '4' ->
-            array[i] = array[i] * 10 + sign * 4
-        :: c == '5' ->
-            array[i] = array[i] * 10 + sign * 5
-        :: c == '6' ->
-            array[i] = array[i] * 10 + sign * 6
-        :: c == '7' ->
-            array[i] = array[i] * 10 + sign * 7
-        :: c == '8' ->
-            array[i] = array[i] * 10 + sign * 8
-        :: c == '9' ->
-            array[i] = array[i] * 10 + sign * 9
-        :: c == ' ' ->
-            sign = 1
-            i++
-        :: c == '\n' -> 
-            break
-        :: else ->
-            skip
-        fi
-    od
+    int i = 0
+    array[0] = 10; array[1] = 1; array[2] = 75; array[3] = 10; array[4] = 14
+    // Считывание массива с консоли
+    //int c, sign = 1
+    // printf("Enter array (size <= 16): ")
+    // do
+    // :: STDIN ? c ->
+    //     if
+    //     :: c == '-' -> 
+    //         sign = -1
+    //     :: c == '0' ->
+    //         array[i] = array[i] * 10 + sign * 0
+    //     :: c == '1' ->
+    //         array[i] = array[i] * 10 + sign * 1
+    //     :: c == '2' ->
+    //         array[i] = array[i] * 10 + sign * 2
+    //     :: c == '3' ->
+    //         array[i] = array[i] * 10 + sign * 3
+    //     :: c == '4' ->
+    //         array[i] = array[i] * 10 + sign * 4
+    //     :: c == '5' ->
+    //         array[i] = array[i] * 10 + sign * 5
+    //     :: c == '6' ->
+    //         array[i] = array[i] * 10 + sign * 6
+    //     :: c == '7' ->
+    //         array[i] = array[i] * 10 + sign * 7
+    //     :: c == '8' ->
+    //         array[i] = array[i] * 10 + sign * 8
+    //     :: c == '9' ->
+    //         array[i] = array[i] * 10 + sign * 9
+    //     :: c == ' ' ->
+    //         sign = 1
+    //         i++
+    //     :: c == '\n' -> 
+    //         break
+    //     :: else ->
+    //         skip
+    //     fi
+    // od
     // Копирование массива в переменные для сортировки
     for (i : 0 .. SIZE - 1) {
         sort1[i] = array[i]
@@ -141,7 +144,6 @@ init {
                 printf("Voting error for array[%d] = %d | %d | %d\n", i, sort1[i], sort2[i], sort3[i])
             fi
             printf("%d", result[i])
-            //assert(isPassed)
         }
         printf("\nEnd\n")
 }
